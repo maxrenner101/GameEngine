@@ -1,4 +1,4 @@
-package me.maxrenner.engine;
+package me.maxrenner.engine.objects;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +15,7 @@ public class Object {
 
     @Getter private final Mesh mesh;
     @Getter @Setter private float x,y,z;
-    @Getter @Setter private float xRot, yRot, zRot;
+    @Getter @Setter private float xRot, yRot, zRot, sizeX, sizeY, sizeZ;
 
     public void setPos(float x, float y, float z){
         this.x = x-mesh.getCenterModelX();
@@ -37,6 +37,9 @@ public class Object {
         this.xRot = 0;
         this.yRot = 0;
         this.zRot = 0;
+        this.sizeX = 1;
+        this.sizeY = 1;
+        this.sizeZ = 1;
     }
 
     public void bind() {
@@ -53,8 +56,11 @@ public class Object {
 
     public Matrix4f getMVP(Camera camera){
         Matrix4f model = new Matrix4f(mesh.getModel());
+
         model.translate(new Vector3f(x,y,z));
         model.rotateAffineXYZ(xRot, yRot, zRot);
+        model.scale(sizeX,sizeY,sizeZ);
+
         return camera.getProjectionMatrix().mul(camera.getWorldMatrix().mul(model));
     }
 }

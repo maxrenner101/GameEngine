@@ -1,11 +1,10 @@
-package me.maxrenner.engine;
+package me.maxrenner.engine.objects;
 
-import org.joml.Matrix4f;
+import me.maxrenner.engine.shaders.ShaderProgram;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class MeshLoader {

@@ -1,6 +1,14 @@
 package me.maxrenner.engine;
 
 import lombok.Getter;
+import me.maxrenner.game.Game;
+import me.maxrenner.engine.input.KeyboardListener;
+import me.maxrenner.engine.input.MouseListener;
+import me.maxrenner.engine.objects.Camera;
+import me.maxrenner.engine.objects.MeshLoader;
+import me.maxrenner.engine.objects.ObjectHandler;
+import me.maxrenner.engine.shaders.ShaderProgram;
+import me.maxrenner.engine.shaders.ShaderSource;
 
 import java.util.Objects;
 
@@ -15,10 +23,11 @@ public class Engine {
     @Getter private final ObjectHandler objectHandler;
     @Getter private final MeshLoader loader;
     @Getter private ShaderProgram program;
+    private Game game;
 
     private Engine() {
         loader = new MeshLoader();
-        objectHandler = new ObjectHandler();
+        objectHandler = new ObjectHandler(this);
     }
 
     public static Engine get() {
@@ -42,42 +51,39 @@ public class Engine {
         }
     }
 
+    public void setGame(Game game){
+        this.game = game;
+    }
 
     public void run() {
         glfwShowWindow(window.getWindow());
-
         glEnable(GL_DEPTH_TEST);
 
         program.bind();
+        game.run();
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
         int mvpLoc = program.setUniformLoc("m_MVP");
         program.unbind();
 
-        Camera camera = new Camera();
+        Camera camera = game.getCamera();
+        glfwSetInputMode(window.getWindow(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwSetInputMode(window.getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-        float deg = 0;
-        float x = 0;
+        double lastUpdate = glfwGetTime(), deltaUpdate = 0.0;
         while(!glfwWindowShouldClose(window.getWindow())){
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             program.bind();
 
-            deg += 0.01f;
-            x+=0.005f;
-            float finalDeg1 = deg;
-            float finalDeg2 = deg;
-            float finalDeg3 = deg;
-            float t = x;
+            double currentTime = glfwGetTime();
+            deltaUpdate = currentTime - lastUpdate;
+            game.update(deltaUpdate);
+            lastUpdate = glfwGetTime();
+
             objectHandler.getObjects().forEach(obj -> {
-
-                obj.setX(t);
-                obj.setRotation(finalDeg1, finalDeg2, finalDeg3);
-
                 program.setUniformMat4(mvpLoc, obj.getMVP(camera));
-
                 obj.bind();
-
                 glDrawElements(GL_TRIANGLES, obj.getMesh().getIndLength(), GL_UNSIGNED_INT, 0);
-
                 obj.unbind();
             });
             program.unbind();
@@ -89,8 +95,16 @@ public class Engine {
         glfwFreeCallbacks(window.getWindow());
         glfwDestroyWindow(window.getWindow());
 
-        // Terminate GLFW and free the error callback
         glfwTerminate();
         Objects.requireNonNull(glfwSetErrorCallback(null)).free();
+    }
+
+    public void setKeyboardListener(KeyboardListener kl){
+        glfwSetKeyCallback(window.getWindow(), kl::key_callback);
+    }
+
+    public void setMouseListener(MouseListener ml){
+        glfwSetMouseButtonCallback(window.getWindow(), ml::mouse_button_callback);
+        glfwSetCursorPosCallback(window.getWindow(), ml::cursor_position_callback);
     }
 }

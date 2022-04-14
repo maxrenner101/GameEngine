@@ -1,4 +1,4 @@
-package me.maxrenner.engine;
+package me.maxrenner.engine.shaders;
 
 import lombok.Getter;
 
@@ -22,7 +22,7 @@ public class ShaderSource {
                 "out vec4 color;\n" +
                 "\n" +
                 "void main() {\n" +
-                "    color = vec4(0.0f,1.0f,0.0f,1.0f);\n" +
+                "    color = vec4(0.0f,1.0f,1.0f,1.0f);\n" +
                 "}";
     }
 }

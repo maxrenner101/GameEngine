@@ -1,7 +1,8 @@
-package me.maxrenner.engine;
+package me.maxrenner.engine.objects;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.maxrenner.engine.shaders.ShaderProgram;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 
@@ -66,7 +67,6 @@ public class Mesh {
             sum+=arr[i*3];
         }
 
-        System.out.println(sum/arr.length);
         return sum/arr.length;
     }
     private static float averageVerticiesY(float[] arr){
@@ -74,7 +74,6 @@ public class Mesh {
         for(int i = 1; i < arr.length/3-1; i++){
             sum+=arr[i*3];
         }
-        System.out.println(sum/arr.length);
         return sum/arr.length;
     }
     private static float averageVerticiesZ(float[] arr){
@@ -82,7 +81,6 @@ public class Mesh {
         for(int i = 2; i < arr.length/3-2; i++){
             sum+=arr[i*3];
         }
-        System.out.println(sum/arr.length);
         return sum/arr.length;
     }
 }

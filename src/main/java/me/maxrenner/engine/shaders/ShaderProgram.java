@@ -1,4 +1,4 @@
-package me.maxrenner.engine;
+package me.maxrenner.engine.shaders;
 
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
